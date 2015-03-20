@@ -36,6 +36,8 @@ aggregate(Survived ~ Child + Sex, data=Titanic, FUN=function(x) {sum(x)/length(x
 table(Pclass)
 summary(Fare)
 sd(Fare)
+boxplot(Titanic$Fare) ##Hay demasiados valores atipicos que quizás convendría eliminar
+kurtosis(Fare) ##leptocurtica
 #Meteremos las tarifas en tramos
 Titanic$Fare2 <- '30+'
 Titanic$Fare2[Titanic$Fare < 30 & Titanic$Fare >= 20] <- '20-30'
