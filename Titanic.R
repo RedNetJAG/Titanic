@@ -34,11 +34,14 @@ aggregate(Survived ~ Child + Sex, data=Titanic, FUN=function(x) {sum(x)/length(x
 
 ## Variables de clase en que viajaban y precio que pagaron
 table(Pclass)
+summary(Fare)
+sd(Fare)
 #Meteremos las tarifas en tramos
 Titanic$Fare2 <- '30+'
 Titanic$Fare2[Titanic$Fare < 30 & Titanic$Fare >= 20] <- '20-30'
 Titanic$Fare2[Titanic$Fare < 20 & Titanic$Fare >= 10] <- '10-20'
 Titanic$Fare2[Titanic$Fare < 10] <- '<10'
+table(Fare2)
 aggregate(Survived ~ Fare2 + Sex, data=Titanic, FUN=function(x) {sum(x)/length(x)})
 #El 86% de las mujeres y el 33% de los hombres que mas pagaron, sobrevivieron
 #Los que menos pagaron, son los que tienen menores cifras dee supervivencia
@@ -50,6 +53,3 @@ cor(Pclass, as.numeric(Fare))
 cor(SibSp, Parch)
 chisq.test(SibSp, Parch, simulate.p.value = TRUE)
 chisq.test(SibSp, Parch, simulate.p.value = TRUE)
-
-
-
