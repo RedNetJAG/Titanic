@@ -21,11 +21,13 @@ sd(Age, na.rm=TRUE)
 edad <- Age
 edad[is.na(edad)] <- 0
 tapply(edad, Survived, mean) ##edad media de los supervivientes: 24 años
+aggregate(edad ~ Survived + Sex, FUN = "mean") #edad media por genero y superv
+cor(Survived, edad) #Correlación edad - superv
 # Analizamos menores de 18 años
 Titanic$Child <- 0
 Titanic$Child[Age<18] <- 1
 # Num de supervivientes por sexo y mayor o menor de edad:
-aggregate(Survived  ~ Child + Sex, data=Titanic, FUN = sum)
+aggregate(Survived ~ Child + Sex, data=Titanic, FUN = sum)
 #Para sacar la proporción, tenemos que dividir la suma de supervivientes entre el total
 aggregate(Survived ~ Child + Sex, data=Titanic, FUN=function(x) {sum(x)/length(x)})
 # El 75% de las mujeres menores sobrevivieron y tan sólo el 16% de los hombres menores
@@ -42,8 +44,6 @@ aggregate(Survived ~ Fare2 + Sex, data=Titanic, FUN=function(x) {sum(x)/length(x
 #Los que menos pagaron, son los que tienen menores cifras dee supervivencia
 aggregate(Survived ~ Fare2 + Pclass + Sex, data=Titanic, FUN=function(x) {sum(x)/length(x)})
 
-
-
 chisq.test(Pclass, Fare, simulate.p.value = TRUE)
 qchisq(0.95,1)
 cor(Pclass, as.numeric(Fare))
@@ -51,8 +51,5 @@ cor(SibSp, Parch)
 chisq.test(SibSp, Parch, simulate.p.value = TRUE)
 chisq.test(SibSp, Parch, simulate.p.value = TRUE)
 
-aggregate(edad, by = list(Survived, Sex), FUN = "mean")
-table(as.numeric(Sex))
 
-cor(Survived, edad)
-table(Survived, Sex)/length(Sex)
+
