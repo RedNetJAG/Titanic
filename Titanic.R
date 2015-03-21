@@ -141,23 +141,23 @@ detach(Titanic)
 attach(datos)
 head(datos)
 ## eliminamos los datos atipicos de Age
-datosF <- subset(datos, Fare<=66)
-head(datosF)
-datosFa <- subset(datos, Fare>66)
-cor(datosF)
+menores66 <- subset(datos, Fare<=66)
+head(menores66)
+mayores66 <- subset(datos, Fare>66)
+cor(menores66)
 ## empeora la corr de Survived con Sex y Pclass, y Parch con SibSp
 ## mejora la de Pclass con Fare
-cor(datosFa)
+cor(mayores66)
 ## Aparece una alta corr de Pclass con SibSp(0.8759)
 
 ## Hacemos la regresión logaritmica al tener var dicotomica (Survived)
-regr<-glm(datosF$Survived ~ datosF$Pclass + datosF$Sex2 + datosF$Age + datosF$SibSp + datosF$Parch + datosF$Fare + datosF$Embarked2, family = binomial)
+regr<-glm(menores66$Survived ~ menores66$Pclass + menores66$Sex2 + menores66$Age + menores66$SibSp + menores66$Parch + menores66$Fare + menores66$Embarked2, family = binomial)
 ## distribución binomial por ser Survived dicotomica, 0 sucede, 1 no sucede
 summary(regr)
 ## Hay q fijarse en los asteriscos, cuantos mas mejor, sube el nivel significativo
 ## los que no lo tienen no me valen, se descartan
 ## lanzamos de nuevo, quitando Embarked2 y Parch
-regr<-glm(datosF$Survived ~ datosF$Pclass + datosF$Sex2 + datosF$Age + datosF$SibSp + datosF$Fare, family = binomial)
+regr<-glm(menores66$Survived ~ menores66$Pclass + menores66$Sex2 + menores66$Age + menores66$SibSp + menores66$Fare, family = binomial)
 summary(regr)
 fitted.values(regr) ##los q tengan un 50 o menos, se pone a valor 0, y los > a 1
 fit1 <- fitted.values(regr) ## creamos vector con los valores
@@ -165,12 +165,12 @@ fit1[fit1 < 0.5] <- 0
 fit1[fit1 >= 0.5] <- 1
 ## queremos comprobar si los valores de Survived predicha están a 0 y 1, 
 ## están bien o mal clasificados con respecto a la Survived observada
-table(datosF$Survived, fit1)/length(datosF)
+table(menores66$Survived, fit1)/length(menores66)
 ## 54.75% + 21.75% =  76.5% de los casos están bien clasif, predichos
 ## intentamos mejorar estos datos
-cor(datosF)
+cor(menores66)
 ##volvemos a hacer la regresión eliminando Parch
-regrF<-glm(datosF$Survived ~ datosF$Pclass + datosF$Sex2 + datosF$Age + datosF$SibSp + datosF$Fare + datosF$Embarked2, family = binomial)
+regrF<-glm(menores66$Survived ~ menores66$Pclass + menores66$Sex2 + menores66$Age + menores66$SibSp + menores66$Fare + menores66$Embarked2, family = binomial)
 summary(regrF)
 fitted.values(regrF) ##los q tengan un 50 o menos, se pone a valor 0, y los > a 1
 fit1 <- fitted.values(regrF) ## creamos vector con los valores
@@ -178,5 +178,31 @@ fit1[fit1 < 0.5] <- 0
 fit1[fit1 >= 0.5] <- 1
 ## queremos comprobar si los valores de Survived predicha están a 0 y 1, 
 ## están bien o mal clasificados con respecto a la Survived observada
-table(datosF$Survived, fit1)/length(datosF)
-cor(datosF)
+table(menores66$Survived, fit1)/length(menores66)
+cor(menores66)
+
+##Trabajamos con mayores66, mayores de 66 años
+cor(mayores66)
+## Survived con Sex2 (-0.6551) y y Pclass (-0.4715)
+## SibSp con Pclass tiene una cor de 0.8759, por lo que vamos a eliminar SibSp
+regrFa<-glm(mayores66$Survived ~ mayores66$Sex2, family = binomial)
+summary(regrFa)
+fitted.values(regrFa) ##los q tengan un 50 o menos, se pone a valor 0, y los > a 1
+fit2 <- fitted.values(regrFa) ## creamos vector con los valores
+fit2[fit2 < 0.5] <- 0
+fit2[fit2 >= 0.5] <- 1
+## queremos comprobar si los valores de Survived predicha están a 0 y 1, 
+## están bien o mal clasificados con respecto a la Survived observada
+table(mayores66$Survived, fit2)/length(mayores66$Survived)
+## 27.58 + 56.03 = 83.61% Buen dato, vamos a intentar incrmentar
+cor(mayores66) # cogemos Pclass por ser la segunda con mayor corr
+regrFa<-glm(mayores66$Survived ~ mayores66$Pclass + mayores66$Sex2, family = binomial)
+summary(regrFa) ## Tiene un p-value muy cercano a 1 (0.992), lo q dice q el error será muy alto
+fitted.values(regrFa)
+fit2 <- fitted.values(regrFa)
+fit2[fit2 < 0.5] <- 0
+fit2[fit2 >= 0.5] <- 1
+table(mayores66$Survived, fit2)/length(mayores66$Survived)
+## 30.17 + 56.03 = 86.2%, mejoramos un 3%, pero con un error tan alto 
+## (p-value cercano a 1) la probabilidad de error es muy alta respecto al beneficio
+
