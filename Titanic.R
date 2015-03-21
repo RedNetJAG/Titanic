@@ -140,7 +140,7 @@ datos <- as.data.frame(datos) #convertimos en dataframe para poder hacer el atta
 detach(Titanic)
 attach(datos)
 head(datos)
-## eliminamos los datos atipicos de Age
+## segmentamos en función de los resultados de line102
 menores66 <- subset(datos, Fare<=66)
 head(menores66)
 mayores66 <- subset(datos, Fare>66)
@@ -205,4 +205,3 @@ fit2[fit2 >= 0.5] <- 1
 table(mayores66$Survived, fit2)/length(mayores66$Survived)
 ## 30.17 + 56.03 = 86.2%, mejoramos un 3%, pero con un error tan alto 
 ## (p-value cercano a 1) la probabilidad de error es muy alta respecto al beneficio
-
